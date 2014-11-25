@@ -67,7 +67,7 @@ void main()
 	//LOG("config_init...\r\n");
 
 	// btle is on usart0
-	//btle_init();
+	btle_init();
 
 	// wan is on usart1
 	wan_init();
@@ -78,11 +78,11 @@ void main()
 	btle_usart_transmit_string("Hello BTLE\r\n");
 
 	while(true){
-		//btle_tick();
+		btle_tick();
 
 		if(term_in > 0)
 		{
-			wan_usart_transmit((char*)term_in);
+			//wan_usart_transmit((char*)term_in);
 		}
 
 		term_in = 0;
