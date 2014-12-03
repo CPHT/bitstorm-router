@@ -11,6 +11,7 @@ RM := rm -rf
 -include wan/subdir.mk
 -include util/subdir.mk
 -include usart/subdir.mk
+-include ramdisk/subdir.mk
 -include queue/subdir.mk
 -include eeprom/subdir.mk
 -include btle/subdir.mk

@@ -25,9 +25,9 @@ queue_t wan_queue;
 void wan_init()
 {
 	wan_usart_init();
+	//wan_usart_get_device_address();
 
-
-	//wan_driver_init();
+	wan_driver_init();
 }
 
 void wan_set_cts()
@@ -58,7 +58,7 @@ void wan_tick()
 		// do something with the message
 
 		// Dequeue the message
-		queue_results_t  result = queue_remove(&wan_queue, (queue_header_t*) msg);
+		queue_remove(&wan_queue, (queue_header_t*) msg);
 
 	}
 }

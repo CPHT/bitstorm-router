@@ -18,6 +18,8 @@
 #include "btle_msg.h"
 #include "btle_driver.h"
 #include "../usart/usart_wan.h"
+#include "../wan/wan_msg.h"
+//#include "../ramdisk/ramdisk.h"
 
 // queue management
 queue_t btle_queue;
@@ -53,7 +55,7 @@ void build_app_msg(btle_msg_t *btle_msg, app_msg_t *msg)
 	msg->nodeType = 1;
 	msg->extAddr = btle_msg->mac;
 	msg->shortAddr = 0;
-	msg->routerAddr = 1;
+	msg->routerAddr = btle_msg->mac;
 	//softVersion;
 	//channelMask;
 	msg->panId = 0x1976;
@@ -67,28 +69,22 @@ void build_app_msg(btle_msg_t *btle_msg, app_msg_t *msg)
 
 }
 
-//void build_app_msg(btle_msg_t *btle_msg, app_msg_t *msg)
-//{
-//msg->message_0 = 'G';
-//msg->message_1 = 'I';
-//msg->message_2 = 'L';
-//}
-
 void btle_tick()
 {
 
 	btle_driver_tick();
 	// check to see if we have a new message
-	if (btle_queue.count > 0)
+	btle_msg_t *msg = ramdisk_next(NULL);
+	if (msg != NULL)
 	{
 		app_msg_t app_msg;
-		frame_header_t frame_header;
+		cmd_send_header_t cmd_header;
 		uint8_t frame[80];
 
-		queue_header_t *qh;
-		qh = btle_queue.head;
+		//queue_header_t *qh;
+		//qh = btle_queue.head;
 
-		btle_msg_t *msg = (btle_msg_t *) QUEUE_DATA(qh);
+		//btle_msg_t *msg = (btle_msg_t *) QUEUE_DATA(qh);
 		build_app_msg(msg, &app_msg);
 
 		// TODO: Handle Messages
@@ -96,37 +92,31 @@ void btle_tick()
 //		if (!(PINB & (1 << PB0)))
 //		{
 
-		frame_header.length = (sizeof(frame_header) - 1) + sizeof(app_msg) + 1;
-		frame_header.command = 0x01;
-		frame_header.pan_id = 'Z';
-		frame_header.short_id = 'Y';
-		frame_header.temp_id = 'P';
+		frame[0] = sizeof(cmd_header) + sizeof(app_msg) + 1;
+		cmd_header.command = CMD_SEND;
+		cmd_header.pan_id = 0x1973;
+		cmd_header.short_id = 'Y';
 
-//		app_msg.message_0 = 'X';
-//		app_msg.message_1 = 'X';
-//		app_msg.message_2 = 'X';
-		int i = 0;
-		for (; i < sizeof(frame_header_t); i++)
+		int frame_index = 1;
+		// header
+		for (int i = 0; i < sizeof(cmd_header); i++)
 		{
-			frame[i] = ((uint8_t *) (&frame_header))[i];
+			frame[frame_index++] = ((uint8_t *) (&cmd_header))[i];
 		}
-		int j = 0;
-		for (i = 6; j < sizeof(app_msg_t); i++)
+		// message
+		for (int i = 0; i < sizeof(app_msg_t); i++)
 		{
-			//wan_usart_transmit_string("test");
-			frame[i] = ((uint8_t *) (&app_msg))[j];
-			j++;
-
+			frame[frame_index++] = ((uint8_t *) (&app_msg))[i];
 		}
+		// checksum
+		frame[frame_index++] = 0xFF;
 
-		frame[i+1] = 0xFF;
-
-		wan_usart_transmit_bytes((char*) frame, i + 1);
-		//wan_usart_transmit_bytes((char*) sizeof(frame_header), 1);
+		wan_usart_transmit_bytes((char*) frame, frame_index);
 		//encode_string(&msg);
 		//}
 		// Dequeue the message
-		queue_remove(&btle_queue, (queue_header_t*) msg);
+		ramdisk_erase(*msg);
+		//queue_remove(&btle_queue, (queue_header_t*) msg);
 
 	}
 }

@@ -26,6 +26,7 @@
 #include "wan/wan_driver.h"
 #include "wan/wan.h"
 #include "usart/usart_wan.h"
+#include "ramdisk/ramdisk.h"
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -60,25 +61,29 @@ void main()
 
 	clock_init();
 	config_init();
+	ramdisk_init();
 
 	/*
 	 * load configuration
 	 */
-	//LOG("config_init...\r\n");
 
-	// btle is on usart0
+	// btle is on usart1
 	btle_init();
 
-	// wan is on usart1
+	// wan is on usart0
 	wan_init();
 
+
 	sei();
+
+	wan_usart_get_device_address();
 
 	//wan_usart_transmit_string("Bitstorm router started\r\n");
 	btle_usart_transmit_string("Hello BTLE\r\n");
 
 	while(true){
 		btle_tick();
+		wan_tick();
 
 		if(term_in > 0)
 		{

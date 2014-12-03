@@ -20,4 +20,19 @@ typedef struct
 
 } wan_msg_t;
 
+typedef struct
+{
+	uint8_t command;
+}cmd_header_t;
+
+enum
+{
+	CMD_SEND = 0x01,
+	CMD_ACK_SEND = 0x02,
+	CMD_CONFIG_NETWORK = 0x03,
+	CMD_GET_ADDRESS = 0x04
+
+};
+
+
 #endif /* WAN_MSG_H_ */

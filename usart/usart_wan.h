@@ -30,6 +30,7 @@ uint8_t wan_usart_data_read(void);
 void wan_usart_transmit(uint8_t data );
 void wan_usart_transmit_bytes(char data[], int size);
 void wan_usart_transmit_string(char * data);
+void wan_usart_get_device_address();
 
 
 #endif /* USART_WAN_H_ */

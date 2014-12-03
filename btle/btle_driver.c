@@ -19,6 +19,7 @@
 #include "btle.h"
 #include "btle_msg.h"
 #include "../usart/usart_wan.h"
+#include "../ramdisk/ramdisk.h"
 
 char HEX_DIGITS[] = "0123456789abcdef";
 
@@ -59,8 +60,8 @@ void btle_driver_tick() {
 				btle_msg_t msg = btle_handle_le_packet(ptr);
 
 				if (msg.mac != 0) {
-					queue_results_t result = btle_enqueue(&msg);
-
+					//queue_results_t result = btle_enqueue(&msg);
+					ramdisk_write(msg);
 					/*
 					if (!(PINB & (1 << PB0))) {
 						encode_string(&msg);

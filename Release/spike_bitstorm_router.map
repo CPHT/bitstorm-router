@@ -6,6 +6,8 @@ Archive member included because of file (symbol)
                               ./wan/wan_driver.o (__do_copy_data)
 /usr/local/CrossPack-AVR-20131216/lib/gcc/avr/4.8.1/avr51/libgcc.a(_clear_bss.o)
                               ./wan/wan.o (__do_clear_bss)
+/usr/local/CrossPack-AVR-20131216/lib/gcc/avr/4.8.1/avr51/libgcc.a(_cmpdi2.o)
+                              ./ramdisk/ramdisk.o (__cmpdi2)
 /usr/local/CrossPack-AVR-20131216/lib/gcc/avr/4.8.1/avr51/libgcc.a(_cmpdi2_s8.o)
                               ./btle/btle_driver.o (__cmpdi2_s8)
 /usr/local/CrossPack-AVR-20131216/lib/gcc/avr/4.8.1/../../../../avr/lib/avr51/libc.a(malloc.o)
@@ -17,15 +19,15 @@ Archive member included because of file (symbol)
 /usr/local/CrossPack-AVR-20131216/lib/gcc/avr/4.8.1/../../../../avr/lib/avr51/libc.a(strchr.o)
                               ./btle/btle_driver.o (strchr)
 /usr/local/CrossPack-AVR-20131216/lib/gcc/avr/4.8.1/../../../../avr/lib/avr51/libc.a(strcpy.o)
-                              ./wan/wan_driver.o (strcpy)
-/usr/local/CrossPack-AVR-20131216/lib/gcc/avr/4.8.1/../../../../avr/lib/avr51/libc.a(strstr.o)
-                              ./wan/wan_driver.o (strstr)
+                              ./btle/btle_driver.o (strcpy)
 /usr/local/CrossPack-AVR-20131216/lib/gcc/avr/4.8.1/../../../../avr/lib/avr51/libc.a(fdevopen.o)
                               ./util/log.o (fdevopen)
 /usr/local/CrossPack-AVR-20131216/lib/gcc/avr/4.8.1/../../../../avr/lib/avr51/libc.a(iob.o)
                               ./util/log.o (__iob)
 /usr/local/CrossPack-AVR-20131216/lib/gcc/avr/4.8.1/../../../../avr/lib/avr51/libc.a(printf_p.o)
                               ./util/log.o (printf_P)
+/usr/local/CrossPack-AVR-20131216/lib/gcc/avr/4.8.1/../../../../avr/lib/avr51/libc.a(sprintf.o)
+                              ./wan/wan_driver.o (sprintf)
 /usr/local/CrossPack-AVR-20131216/lib/gcc/avr/4.8.1/../../../../avr/lib/avr51/libc.a(sprintf_p.o)
                               ./btle/btle_driver.o (sprintf_P)
 /usr/local/CrossPack-AVR-20131216/lib/gcc/avr/4.8.1/../../../../avr/lib/avr51/libc.a(vfprintf_p.o)
@@ -56,8 +58,11 @@ btle_lines          0x81              ./btle/btle_driver.o
 debug_out_cb        0x2               ./util/log.o
 wan_line_buffer     0x81              ./wan/wan_driver.o
 __brkval            0x2               /usr/local/CrossPack-AVR-20131216/lib/gcc/avr/4.8.1/../../../../avr/lib/avr51/libc.a(malloc.o)
+appConfig           0x1               ./wan/wan_driver.o
+bytes_message       0x40              ./wan/wan_driver.o
 wan_lines           0x81              ./wan/wan_driver.o
 debug_rx_cb         0x2               ./util/log.o
+bytes_received      0x40              ./wan/wan_driver.o
 clock_millis        0x4               ./util/clock.o
 btle_queue          0xc               ./btle/btle.o
 wan_queue           0xc               ./wan/wan.o
@@ -90,6 +95,7 @@ LOAD ./util/config.o
 LOAD ./util/log.o
 LOAD ./usart/usart_btle.o
 LOAD ./usart/usart_wan.o
+LOAD ./ramdisk/ramdisk.o
 LOAD ./queue/queue.o
 LOAD ./eeprom/eeprom.o
 LOAD ./btle/btle.o
@@ -191,7 +197,7 @@ END GROUP
 .rela.plt
  *(.rela.plt)
 
-.text           0x00000000     0x1ac6
+.text           0x00000000     0x203c
  *(.vectors)
  .vectors       0x00000000       0x8c /usr/local/CrossPack-AVR-20131216/lib/gcc/avr/4.8.1/../../../../avr/lib/avr51/crtm1284p.o
                 0x00000000                __vectors
@@ -217,7 +223,7 @@ END GROUP
  .progmem.data.BTLE_hex
                 0x000000b8       0x11 ./usart/usart_btle.o
                 0x000000b8                BTLE_hex
- .progmem.data.__c.2201
+ .progmem.data.__c.2233
                 0x000000c9       0x23 ./btle/btle_driver.o
                 0x000000ec                . = ALIGN (0x2)
  *(.jumptables)
@@ -301,6 +307,7 @@ END GROUP
  .text          0x0000012e        0x0 ./util/log.o
  .text          0x0000012e        0x0 ./usart/usart_btle.o
  .text          0x0000012e        0x0 ./usart/usart_wan.o
+ .text          0x0000012e        0x0 ./ramdisk/ramdisk.o
  .text          0x0000012e        0x0 ./queue/queue.o
  .text          0x0000012e        0x0 ./eeprom/eeprom.o
  .text          0x0000012e        0x0 ./btle/btle.o
@@ -309,16 +316,17 @@ END GROUP
  .text          0x0000012e        0x0 /usr/local/CrossPack-AVR-20131216/lib/gcc/avr/4.8.1/avr51/libgcc.a(_exit.o)
  .text          0x0000012e        0x0 /usr/local/CrossPack-AVR-20131216/lib/gcc/avr/4.8.1/avr51/libgcc.a(_copy_data.o)
  .text          0x0000012e        0x0 /usr/local/CrossPack-AVR-20131216/lib/gcc/avr/4.8.1/avr51/libgcc.a(_clear_bss.o)
+ .text          0x0000012e        0x0 /usr/local/CrossPack-AVR-20131216/lib/gcc/avr/4.8.1/avr51/libgcc.a(_cmpdi2.o)
  .text          0x0000012e        0x0 /usr/local/CrossPack-AVR-20131216/lib/gcc/avr/4.8.1/avr51/libgcc.a(_cmpdi2_s8.o)
  .text          0x0000012e        0x0 /usr/local/CrossPack-AVR-20131216/lib/gcc/avr/4.8.1/../../../../avr/lib/avr51/libc.a(malloc.o)
  .text          0x0000012e        0x0 /usr/local/CrossPack-AVR-20131216/lib/gcc/avr/4.8.1/../../../../avr/lib/avr51/libc.a(memcmp.o)
  .text          0x0000012e        0x0 /usr/local/CrossPack-AVR-20131216/lib/gcc/avr/4.8.1/../../../../avr/lib/avr51/libc.a(memcpy.o)
  .text          0x0000012e        0x0 /usr/local/CrossPack-AVR-20131216/lib/gcc/avr/4.8.1/../../../../avr/lib/avr51/libc.a(strchr.o)
  .text          0x0000012e        0x0 /usr/local/CrossPack-AVR-20131216/lib/gcc/avr/4.8.1/../../../../avr/lib/avr51/libc.a(strcpy.o)
- .text          0x0000012e        0x0 /usr/local/CrossPack-AVR-20131216/lib/gcc/avr/4.8.1/../../../../avr/lib/avr51/libc.a(strstr.o)
  .text          0x0000012e        0x0 /usr/local/CrossPack-AVR-20131216/lib/gcc/avr/4.8.1/../../../../avr/lib/avr51/libc.a(fdevopen.o)
  .text          0x0000012e        0x0 /usr/local/CrossPack-AVR-20131216/lib/gcc/avr/4.8.1/../../../../avr/lib/avr51/libc.a(iob.o)
  .text          0x0000012e        0x0 /usr/local/CrossPack-AVR-20131216/lib/gcc/avr/4.8.1/../../../../avr/lib/avr51/libc.a(printf_p.o)
+ .text          0x0000012e        0x0 /usr/local/CrossPack-AVR-20131216/lib/gcc/avr/4.8.1/../../../../avr/lib/avr51/libc.a(sprintf.o)
  .text          0x0000012e        0x0 /usr/local/CrossPack-AVR-20131216/lib/gcc/avr/4.8.1/../../../../avr/lib/avr51/libc.a(sprintf_p.o)
  .text          0x0000012e        0x0 /usr/local/CrossPack-AVR-20131216/lib/gcc/avr/4.8.1/../../../../avr/lib/avr51/libc.a(vfprintf_p.o)
  .text          0x0000012e        0x0 /usr/local/CrossPack-AVR-20131216/lib/gcc/avr/4.8.1/../../../../avr/lib/avr51/libc.a(vfprintf_std.o)
@@ -333,327 +341,362 @@ END GROUP
                 0x0000012e                . = ALIGN (0x2)
  *(.text.*)
  .text.wan_init
-                0x0000012e        0x4 ./wan/wan.o
+                0x0000012e        0x8 ./wan/wan.o
                 0x0000012e                wan_init
  .text.wan_set_cts
-                0x00000132        0x4 ./wan/wan.o
-                0x00000132                wan_set_cts
+                0x00000136        0x4 ./wan/wan.o
+                0x00000136                wan_set_cts
  .text.wan_get_rts
-                0x00000136        0x6 ./wan/wan.o
-                0x00000136                wan_get_rts
+                0x0000013a        0x6 ./wan/wan.o
+                0x0000013a                wan_get_rts
  .text.wan_tick
-                0x0000013c       0x26 ./wan/wan.o
-                0x0000013c                wan_tick
+                0x00000140       0x26 ./wan/wan.o
+                0x00000140                wan_tick
  .text.wan_enqueue
-                0x00000162        0xe ./wan/wan.o
-                0x00000162                wan_enqueue
+                0x00000166        0xe ./wan/wan.o
+                0x00000166                wan_enqueue
  .text.wan_driver_init
-                0x00000170       0x26 ./wan/wan_driver.o
-                0x00000170                wan_driver_init
+                0x00000174       0x26 ./wan/wan_driver.o
+                0x00000174                wan_driver_init
  .text.wan_driver_tick
-                0x00000196       0x7c ./wan/wan_driver.o
-                0x00000196                wan_driver_tick
+                0x0000019a      0x102 ./wan/wan_driver.o
+                0x0000019a                wan_driver_tick
  .text.clock_init
-                0x00000212       0x18 ./util/clock.o
-                0x00000212                clock_init
+                0x0000029c       0x18 ./util/clock.o
+                0x0000029c                clock_init
  .text.clock_time
-                0x0000022a       0x12 ./util/clock.o
-                0x0000022a                clock_time
+                0x000002b4       0x12 ./util/clock.o
+                0x000002b4                clock_time
  .text.delay_millis
-                0x0000023c       0x3c ./util/clock.o
-                0x0000023c                delay_millis
+                0x000002c6       0x3c ./util/clock.o
+                0x000002c6                delay_millis
  .text.__vector_16
-                0x00000278       0x4a ./util/clock.o
-                0x00000278                __vector_16
+                0x00000302       0x4a ./util/clock.o
+                0x00000302                __vector_16
  .text.isr_tick
-                0x000002c2       0x28 ./util/clock.o
-                0x000002c2                isr_tick
+                0x0000034c       0x28 ./util/clock.o
+                0x0000034c                isr_tick
  .text.config_init
-                0x000002ea       0x3e ./util/config.o
-                0x000002ea                config_init
+                0x00000374       0x3e ./util/config.o
+                0x00000374                config_init
  .text.load_config
-                0x00000328        0x2 ./util/config.o
-                0x00000328                load_config
+                0x000003b2        0x2 ./util/config.o
+                0x000003b2                load_config
  .text.write_config
-                0x0000032a        0x2 ./util/config.o
-                0x0000032a                write_config
+                0x000003b4        0x2 ./util/config.o
+                0x000003b4                write_config
  .text._debug_init
-                0x0000032c       0x38 ./util/log.o
-                0x0000032c                _debug_init
+                0x000003b6       0x38 ./util/log.o
+                0x000003b6                _debug_init
  .text.USART_RX_vect
-                0x00000364       0x5e ./util/log.o
-                0x00000364                USART_RX_vect
+                0x000003ee       0x5e ./util/log.o
+                0x000003ee                USART_RX_vect
  .text._debug_set_rx_cb
-                0x000003c2        0xa ./util/log.o
-                0x000003c2                _debug_set_rx_cb
+                0x0000044c        0xa ./util/log.o
+                0x0000044c                _debug_set_rx_cb
  .text._debug_set_out_cb
-                0x000003cc        0xa ./util/log.o
-                0x000003cc                _debug_set_out_cb
+                0x00000456        0xa ./util/log.o
+                0x00000456                _debug_set_out_cb
  .text._debug_stringz
-                0x000003d6       0x18 ./util/log.o
-                0x000003d6                _debug_stringz
+                0x00000460       0x18 ./util/log.o
+                0x00000460                _debug_stringz
  .text._debug_byte
-                0x000003ee        0xe ./util/log.o
-                0x000003ee                _debug_byte
+                0x00000478        0xe ./util/log.o
+                0x00000478                _debug_byte
  .text._debug_putch
-                0x000003fc       0x20 ./util/log.o
-                0x000003fc                _debug_putch
+                0x00000486       0x20 ./util/log.o
+                0x00000486                _debug_putch
  .text._debug_byte_as_hex
-                0x0000041c       0x34 ./util/log.o
-                0x0000041c                _debug_byte_as_hex
+                0x000004a6       0x34 ./util/log.o
+                0x000004a6                _debug_byte_as_hex
  .text._debug_hex_dump
-                0x00000450       0x44 ./util/log.o
-                0x00000450                _debug_hex_dump
+                0x000004da       0x44 ./util/log.o
+                0x000004da                _debug_hex_dump
  .text._debug_log
-                0x00000494       0x6c ./util/log.o
-                0x00000494                _debug_log
+                0x0000051e       0x6c ./util/log.o
+                0x0000051e                _debug_log
  .text.debug_test
-                0x00000500       0x70 ./util/log.o
-                0x00000500                debug_test
+                0x0000058a       0x70 ./util/log.o
+                0x0000058a                debug_test
  .text._btle_set_rx_cb
-                0x00000570        0xa ./usart/usart_btle.o
-                0x00000570                _btle_set_rx_cb
+                0x000005fa        0xa ./usart/usart_btle.o
+                0x000005fa                _btle_set_rx_cb
  .text.btle_usart_init
-                0x0000057a       0x26 ./usart/usart_btle.o
-                0x0000057a                btle_usart_init
+                0x00000604       0x26 ./usart/usart_btle.o
+                0x00000604                btle_usart_init
  .text.btle_usart_init_cb
-                0x000005a0       0x2e ./usart/usart_btle.o
-                0x000005a0                btle_usart_init_cb
+                0x0000062a       0x2e ./usart/usart_btle.o
+                0x0000062a                btle_usart_init_cb
  .text.btle_usart_put_char
-                0x000005ce       0x30 ./usart/usart_btle.o
-                0x000005ce                btle_usart_put_char
+                0x00000658       0x30 ./usart/usart_btle.o
+                0x00000658                btle_usart_put_char
  .text.btle_usart_clear_buffer
-                0x000005fe       0x16 ./usart/usart_btle.o
-                0x000005fe                btle_usart_clear_buffer
+                0x00000688       0x16 ./usart/usart_btle.o
+                0x00000688                btle_usart_clear_buffer
  .text.btle_usart_data_available
-                0x00000614        0xc ./usart/usart_btle.o
-                0x00000614                btle_usart_data_available
+                0x0000069e        0xc ./usart/usart_btle.o
+                0x0000069e                btle_usart_data_available
  .text.btle_usart_data_read
-                0x00000620       0x32 ./usart/usart_btle.o
-                0x00000620                btle_usart_data_read
+                0x000006aa       0x32 ./usart/usart_btle.o
+                0x000006aa                btle_usart_data_read
  .text.btle_usart_transmit
-                0x00000652        0xe ./usart/usart_btle.o
-                0x00000652                btle_usart_transmit
+                0x000006dc        0xe ./usart/usart_btle.o
+                0x000006dc                btle_usart_transmit
  .text.btle_usart_transmit_bytes
-                0x00000660       0x20 ./usart/usart_btle.o
-                0x00000660                btle_usart_transmit_bytes
+                0x000006ea       0x20 ./usart/usart_btle.o
+                0x000006ea                btle_usart_transmit_bytes
  .text.btle_usart_transmit_string
-                0x00000680       0x18 ./usart/usart_btle.o
-                0x00000680                btle_usart_transmit_string
+                0x0000070a       0x18 ./usart/usart_btle.o
+                0x0000070a                btle_usart_transmit_string
  .text.__vector_28
-                0x00000698       0x6a ./usart/usart_btle.o
-                0x00000698                __vector_28
+                0x00000722       0x6a ./usart/usart_btle.o
+                0x00000722                __vector_28
  .text.wan_usart_init
-                0x00000702       0x26 ./usart/usart_wan.o
-                0x00000702                wan_usart_init
+                0x0000078c       0x26 ./usart/usart_wan.o
+                0x0000078c                wan_usart_init
  .text.wan_usart_put_char
-                0x00000728       0x30 ./usart/usart_wan.o
-                0x00000728                wan_usart_put_char
+                0x000007b2       0x30 ./usart/usart_wan.o
+                0x000007b2                wan_usart_put_char
  .text.wan_usart_clear_buffer
-                0x00000758       0x16 ./usart/usart_wan.o
-                0x00000758                wan_usart_clear_buffer
+                0x000007e2       0x16 ./usart/usart_wan.o
+                0x000007e2                wan_usart_clear_buffer
  .text.wan_usart_data_available
-                0x0000076e        0xc ./usart/usart_wan.o
-                0x0000076e                wan_usart_data_available
+                0x000007f8        0xc ./usart/usart_wan.o
+                0x000007f8                wan_usart_data_available
  .text.wan_usart_data_read
-                0x0000077a       0x32 ./usart/usart_wan.o
-                0x0000077a                wan_usart_data_read
+                0x00000804       0x32 ./usart/usart_wan.o
+                0x00000804                wan_usart_data_read
  .text.wan_usart_transmit
-                0x000007ac        0xe ./usart/usart_wan.o
-                0x000007ac                wan_usart_transmit
+                0x00000836        0xe ./usart/usart_wan.o
+                0x00000836                wan_usart_transmit
  .text.wan_usart_transmit_bytes
-                0x000007ba       0x20 ./usart/usart_wan.o
-                0x000007ba                wan_usart_transmit_bytes
+                0x00000844       0x20 ./usart/usart_wan.o
+                0x00000844                wan_usart_transmit_bytes
  .text.wan_usart_transmit_string
-                0x000007da       0x18 ./usart/usart_wan.o
-                0x000007da                wan_usart_transmit_string
+                0x00000864       0x18 ./usart/usart_wan.o
+                0x00000864                wan_usart_transmit_string
+ .text.wan_usart_get_device_address
+                0x0000087c       0x46 ./usart/usart_wan.o
+                0x0000087c                wan_usart_get_device_address
  .text.__vector_20
-                0x000007f2       0x54 ./usart/usart_wan.o
-                0x000007f2                __vector_20
+                0x000008c2       0x54 ./usart/usart_wan.o
+                0x000008c2                __vector_20
+ .text.ramdisk_init
+                0x00000916       0x34 ./ramdisk/ramdisk.o
+                0x00000916                ramdisk_init
+ .text.ramdisk_write
+                0x0000094a      0x100 ./ramdisk/ramdisk.o
+                0x0000094a                ramdisk_write
+ .text.ramdisk_erase
+                0x00000a4a      0x138 ./ramdisk/ramdisk.o
+                0x00000a4a                ramdisk_erase
+ .text.ramdisk_find
+                0x00000b82       0x7e ./ramdisk/ramdisk.o
+                0x00000b82                ramdisk_find
+ .text.ramdisk_next
+                0x00000c00       0x24 ./ramdisk/ramdisk.o
+                0x00000c00                ramdisk_next
  .text.queue_reset
-                0x00000846       0x18 ./queue/queue.o
-                0x00000846                queue_reset
+                0x00000c24       0x18 ./queue/queue.o
+                0x00000c24                queue_reset
  .text.queue_init
-                0x0000085e        0xa ./queue/queue.o
-                0x0000085e                queue_init
+                0x00000c3c        0xa ./queue/queue.o
+                0x00000c3c                queue_init
  .text.queue_enqueue
-                0x00000868      0x124 ./queue/queue.o
-                0x00000868                queue_enqueue
+                0x00000c46      0x124 ./queue/queue.o
+                0x00000c46                queue_enqueue
  .text.queue_dequeue
-                0x0000098c       0xce ./queue/queue.o
-                0x0000098c                queue_dequeue
+                0x00000d6a       0xce ./queue/queue.o
+                0x00000d6a                queue_dequeue
  .text.queue_find
-                0x00000a5a       0x6a ./queue/queue.o
-                0x00000a5a                queue_find
+                0x00000e38       0x6a ./queue/queue.o
+                0x00000e38                queue_find
  .text.queue_remove
-                0x00000ac4       0xa0 ./queue/queue.o
-                0x00000ac4                queue_remove
+                0x00000ea2       0xa0 ./queue/queue.o
+                0x00000ea2                queue_remove
  .text.queue_peek_length
-                0x00000b64       0x20 ./queue/queue.o
-                0x00000b64                queue_peek_length
+                0x00000f42       0x20 ./queue/queue.o
+                0x00000f42                queue_peek_length
  .text.queue_clear
-                0x00000b84       0x32 ./queue/queue.o
-                0x00000b84                queue_clear
+                0x00000f62       0x32 ./queue/queue.o
+                0x00000f62                queue_clear
  .text.eeprom_read
-                0x00000bb6        0x4 ./eeprom/eeprom.o
-                0x00000bb6                eeprom_read
+                0x00000f94        0x4 ./eeprom/eeprom.o
+                0x00000f94                eeprom_read
  .text.eeprom_write
-                0x00000bba        0x4 ./eeprom/eeprom.o
-                0x00000bba                eeprom_write
+                0x00000f98        0x4 ./eeprom/eeprom.o
+                0x00000f98                eeprom_write
  .text.btle_set_cts
-                0x00000bbe        0x4 ./btle/btle.o
-                0x00000bbe                btle_set_cts
+                0x00000f9c        0x4 ./btle/btle.o
+                0x00000f9c                btle_set_cts
  .text.btle_init
-                0x00000bc2        0xc ./btle/btle.o
-                0x00000bc2                btle_init
+                0x00000fa0        0xc ./btle/btle.o
+                0x00000fa0                btle_init
  .text.btle_get_rts
-                0x00000bce        0x6 ./btle/btle.o
-                0x00000bce                btle_get_rts
+                0x00000fac        0x6 ./btle/btle.o
+                0x00000fac                btle_get_rts
+ .text.build_app_msg
+                0x00000fb2       0xa2 ./btle/btle.o
+                0x00000fb2                build_app_msg
  .text.btle_tick
-                0x00000bd4       0x4a ./btle/btle.o
-                0x00000bd4                btle_tick
+                0x00001054       0xd0 ./btle/btle.o
+                0x00001054                btle_tick
  .text.btle_enqueue
-                0x00000c1e        0xe ./btle/btle.o
-                0x00000c1e                btle_enqueue
+                0x00001124        0xe ./btle/btle.o
+                0x00001124                btle_enqueue
  .text.btle_parse_nybble
-                0x00000c2c       0x24 ./btle/btle_driver.o
+                0x00001132       0x24 ./btle/btle_driver.o
  .text.btle_driver_init
-                0x00000c50       0x32 ./btle/btle_driver.o
-                0x00000c50                btle_driver_init
+                0x00001156       0x32 ./btle/btle_driver.o
+                0x00001156                btle_driver_init
  .text.btle_driver_tick
-                0x00000c82      0x2e6 ./btle/btle_driver.o
-                0x00000c82                btle_driver_tick
+                0x00001188      0x312 ./btle/btle_driver.o
+                0x00001188                btle_driver_tick
  .text.encode_string
-                0x00000f68       0x96 ./btle/btle_driver.o
-                0x00000f68                encode_string
+                0x0000149a       0x96 ./btle/btle_driver.o
+                0x0000149a                encode_string
  .text.terminal_in_cb
-                0x00000ffe        0x6 ./main.o
-                0x00000ffe                terminal_in_cb
+                0x00001530        0x6 ./main.o
+                0x00001530                terminal_in_cb
  .text.set_timer
-                0x00001004       0x32 ./main.o
-                0x00001004                set_timer
- .text.timeout  0x00001036       0x3a ./main.o
-                0x00001036                timeout
+                0x00001536       0x32 ./main.o
+                0x00001536                set_timer
+ .text.timeout  0x00001568       0x3a ./main.o
+                0x00001568                timeout
  .text.startup.main
-                0x00001070       0x5a ./main.o
-                0x00001070                main
+                0x000015a2       0x62 ./main.o
+                0x000015a2                main
  .text.libgcc.mul
-                0x000010ca        0x0 /usr/local/CrossPack-AVR-20131216/lib/gcc/avr/4.8.1/avr51/libgcc.a(_exit.o)
+                0x00001604        0x0 /usr/local/CrossPack-AVR-20131216/lib/gcc/avr/4.8.1/avr51/libgcc.a(_exit.o)
  .text.libgcc.div
-                0x000010ca        0x0 /usr/local/CrossPack-AVR-20131216/lib/gcc/avr/4.8.1/avr51/libgcc.a(_exit.o)
- .text.libgcc   0x000010ca        0x0 /usr/local/CrossPack-AVR-20131216/lib/gcc/avr/4.8.1/avr51/libgcc.a(_exit.o)
+                0x00001604        0x0 /usr/local/CrossPack-AVR-20131216/lib/gcc/avr/4.8.1/avr51/libgcc.a(_exit.o)
+ .text.libgcc   0x00001604        0x0 /usr/local/CrossPack-AVR-20131216/lib/gcc/avr/4.8.1/avr51/libgcc.a(_exit.o)
  .text.libgcc.prologue
-                0x000010ca        0x0 /usr/local/CrossPack-AVR-20131216/lib/gcc/avr/4.8.1/avr51/libgcc.a(_exit.o)
+                0x00001604        0x0 /usr/local/CrossPack-AVR-20131216/lib/gcc/avr/4.8.1/avr51/libgcc.a(_exit.o)
  .text.libgcc.builtins
-                0x000010ca        0x0 /usr/local/CrossPack-AVR-20131216/lib/gcc/avr/4.8.1/avr51/libgcc.a(_exit.o)
+                0x00001604        0x0 /usr/local/CrossPack-AVR-20131216/lib/gcc/avr/4.8.1/avr51/libgcc.a(_exit.o)
  .text.libgcc.fmul
-                0x000010ca        0x0 /usr/local/CrossPack-AVR-20131216/lib/gcc/avr/4.8.1/avr51/libgcc.a(_exit.o)
+                0x00001604        0x0 /usr/local/CrossPack-AVR-20131216/lib/gcc/avr/4.8.1/avr51/libgcc.a(_exit.o)
  .text.libgcc.fixed
-                0x000010ca        0x0 /usr/local/CrossPack-AVR-20131216/lib/gcc/avr/4.8.1/avr51/libgcc.a(_exit.o)
+                0x00001604        0x0 /usr/local/CrossPack-AVR-20131216/lib/gcc/avr/4.8.1/avr51/libgcc.a(_exit.o)
  .text.libgcc.mul
-                0x000010ca        0x0 /usr/local/CrossPack-AVR-20131216/lib/gcc/avr/4.8.1/avr51/libgcc.a(_copy_data.o)
+                0x00001604        0x0 /usr/local/CrossPack-AVR-20131216/lib/gcc/avr/4.8.1/avr51/libgcc.a(_copy_data.o)
  .text.libgcc.div
-                0x000010ca        0x0 /usr/local/CrossPack-AVR-20131216/lib/gcc/avr/4.8.1/avr51/libgcc.a(_copy_data.o)
- .text.libgcc   0x000010ca        0x0 /usr/local/CrossPack-AVR-20131216/lib/gcc/avr/4.8.1/avr51/libgcc.a(_copy_data.o)
+                0x00001604        0x0 /usr/local/CrossPack-AVR-20131216/lib/gcc/avr/4.8.1/avr51/libgcc.a(_copy_data.o)
+ .text.libgcc   0x00001604        0x0 /usr/local/CrossPack-AVR-20131216/lib/gcc/avr/4.8.1/avr51/libgcc.a(_copy_data.o)
  .text.libgcc.prologue
-                0x000010ca        0x0 /usr/local/CrossPack-AVR-20131216/lib/gcc/avr/4.8.1/avr51/libgcc.a(_copy_data.o)
+                0x00001604        0x0 /usr/local/CrossPack-AVR-20131216/lib/gcc/avr/4.8.1/avr51/libgcc.a(_copy_data.o)
  .text.libgcc.builtins
-                0x000010ca        0x0 /usr/local/CrossPack-AVR-20131216/lib/gcc/avr/4.8.1/avr51/libgcc.a(_copy_data.o)
+                0x00001604        0x0 /usr/local/CrossPack-AVR-20131216/lib/gcc/avr/4.8.1/avr51/libgcc.a(_copy_data.o)
  .text.libgcc.fmul
-                0x000010ca        0x0 /usr/local/CrossPack-AVR-20131216/lib/gcc/avr/4.8.1/avr51/libgcc.a(_copy_data.o)
+                0x00001604        0x0 /usr/local/CrossPack-AVR-20131216/lib/gcc/avr/4.8.1/avr51/libgcc.a(_copy_data.o)
  .text.libgcc.fixed
-                0x000010ca        0x0 /usr/local/CrossPack-AVR-20131216/lib/gcc/avr/4.8.1/avr51/libgcc.a(_copy_data.o)
+                0x00001604        0x0 /usr/local/CrossPack-AVR-20131216/lib/gcc/avr/4.8.1/avr51/libgcc.a(_copy_data.o)
  .text.libgcc.mul
-                0x000010ca        0x0 /usr/local/CrossPack-AVR-20131216/lib/gcc/avr/4.8.1/avr51/libgcc.a(_clear_bss.o)
+                0x00001604        0x0 /usr/local/CrossPack-AVR-20131216/lib/gcc/avr/4.8.1/avr51/libgcc.a(_clear_bss.o)
  .text.libgcc.div
-                0x000010ca        0x0 /usr/local/CrossPack-AVR-20131216/lib/gcc/avr/4.8.1/avr51/libgcc.a(_clear_bss.o)
- .text.libgcc   0x000010ca        0x0 /usr/local/CrossPack-AVR-20131216/lib/gcc/avr/4.8.1/avr51/libgcc.a(_clear_bss.o)
+                0x00001604        0x0 /usr/local/CrossPack-AVR-20131216/lib/gcc/avr/4.8.1/avr51/libgcc.a(_clear_bss.o)
+ .text.libgcc   0x00001604        0x0 /usr/local/CrossPack-AVR-20131216/lib/gcc/avr/4.8.1/avr51/libgcc.a(_clear_bss.o)
  .text.libgcc.prologue
-                0x000010ca        0x0 /usr/local/CrossPack-AVR-20131216/lib/gcc/avr/4.8.1/avr51/libgcc.a(_clear_bss.o)
+                0x00001604        0x0 /usr/local/CrossPack-AVR-20131216/lib/gcc/avr/4.8.1/avr51/libgcc.a(_clear_bss.o)
  .text.libgcc.builtins
-                0x000010ca        0x0 /usr/local/CrossPack-AVR-20131216/lib/gcc/avr/4.8.1/avr51/libgcc.a(_clear_bss.o)
+                0x00001604        0x0 /usr/local/CrossPack-AVR-20131216/lib/gcc/avr/4.8.1/avr51/libgcc.a(_clear_bss.o)
  .text.libgcc.fmul
-                0x000010ca        0x0 /usr/local/CrossPack-AVR-20131216/lib/gcc/avr/4.8.1/avr51/libgcc.a(_clear_bss.o)
+                0x00001604        0x0 /usr/local/CrossPack-AVR-20131216/lib/gcc/avr/4.8.1/avr51/libgcc.a(_clear_bss.o)
  .text.libgcc.fixed
-                0x000010ca        0x0 /usr/local/CrossPack-AVR-20131216/lib/gcc/avr/4.8.1/avr51/libgcc.a(_clear_bss.o)
+                0x00001604        0x0 /usr/local/CrossPack-AVR-20131216/lib/gcc/avr/4.8.1/avr51/libgcc.a(_clear_bss.o)
  .text.libgcc.mul
-                0x000010ca        0x0 /usr/local/CrossPack-AVR-20131216/lib/gcc/avr/4.8.1/avr51/libgcc.a(_cmpdi2_s8.o)
+                0x00001604        0x0 /usr/local/CrossPack-AVR-20131216/lib/gcc/avr/4.8.1/avr51/libgcc.a(_cmpdi2.o)
  .text.libgcc.div
-                0x000010ca        0x0 /usr/local/CrossPack-AVR-20131216/lib/gcc/avr/4.8.1/avr51/libgcc.a(_cmpdi2_s8.o)
- .text.libgcc   0x000010ca       0x18 /usr/local/CrossPack-AVR-20131216/lib/gcc/avr/4.8.1/avr51/libgcc.a(_cmpdi2_s8.o)
-                0x000010ca                __cmpdi2_s8
+                0x00001604        0x0 /usr/local/CrossPack-AVR-20131216/lib/gcc/avr/4.8.1/avr51/libgcc.a(_cmpdi2.o)
+ .text.libgcc   0x00001604       0x12 /usr/local/CrossPack-AVR-20131216/lib/gcc/avr/4.8.1/avr51/libgcc.a(_cmpdi2.o)
+                0x00001604                __cmpdi2
  .text.libgcc.prologue
-                0x000010e2        0x0 /usr/local/CrossPack-AVR-20131216/lib/gcc/avr/4.8.1/avr51/libgcc.a(_cmpdi2_s8.o)
+                0x00001616        0x0 /usr/local/CrossPack-AVR-20131216/lib/gcc/avr/4.8.1/avr51/libgcc.a(_cmpdi2.o)
  .text.libgcc.builtins
-                0x000010e2        0x0 /usr/local/CrossPack-AVR-20131216/lib/gcc/avr/4.8.1/avr51/libgcc.a(_cmpdi2_s8.o)
+                0x00001616        0x0 /usr/local/CrossPack-AVR-20131216/lib/gcc/avr/4.8.1/avr51/libgcc.a(_cmpdi2.o)
  .text.libgcc.fmul
-                0x000010e2        0x0 /usr/local/CrossPack-AVR-20131216/lib/gcc/avr/4.8.1/avr51/libgcc.a(_cmpdi2_s8.o)
+                0x00001616        0x0 /usr/local/CrossPack-AVR-20131216/lib/gcc/avr/4.8.1/avr51/libgcc.a(_cmpdi2.o)
  .text.libgcc.fixed
-                0x000010e2        0x0 /usr/local/CrossPack-AVR-20131216/lib/gcc/avr/4.8.1/avr51/libgcc.a(_cmpdi2_s8.o)
+                0x00001616        0x0 /usr/local/CrossPack-AVR-20131216/lib/gcc/avr/4.8.1/avr51/libgcc.a(_cmpdi2.o)
+ .text.libgcc.mul
+                0x00001616        0x0 /usr/local/CrossPack-AVR-20131216/lib/gcc/avr/4.8.1/avr51/libgcc.a(_cmpdi2_s8.o)
+ .text.libgcc.div
+                0x00001616        0x0 /usr/local/CrossPack-AVR-20131216/lib/gcc/avr/4.8.1/avr51/libgcc.a(_cmpdi2_s8.o)
+ .text.libgcc   0x00001616       0x18 /usr/local/CrossPack-AVR-20131216/lib/gcc/avr/4.8.1/avr51/libgcc.a(_cmpdi2_s8.o)
+                0x00001616                __cmpdi2_s8
+ .text.libgcc.prologue
+                0x0000162e        0x0 /usr/local/CrossPack-AVR-20131216/lib/gcc/avr/4.8.1/avr51/libgcc.a(_cmpdi2_s8.o)
+ .text.libgcc.builtins
+                0x0000162e        0x0 /usr/local/CrossPack-AVR-20131216/lib/gcc/avr/4.8.1/avr51/libgcc.a(_cmpdi2_s8.o)
+ .text.libgcc.fmul
+                0x0000162e        0x0 /usr/local/CrossPack-AVR-20131216/lib/gcc/avr/4.8.1/avr51/libgcc.a(_cmpdi2_s8.o)
+ .text.libgcc.fixed
+                0x0000162e        0x0 /usr/local/CrossPack-AVR-20131216/lib/gcc/avr/4.8.1/avr51/libgcc.a(_cmpdi2_s8.o)
  .text.avr-libc
-                0x000010e2      0x24e /usr/local/CrossPack-AVR-20131216/lib/gcc/avr/4.8.1/../../../../avr/lib/avr51/libc.a(malloc.o)
-                0x000010e2                malloc
-                0x00001212                free
+                0x0000162e      0x24e /usr/local/CrossPack-AVR-20131216/lib/gcc/avr/4.8.1/../../../../avr/lib/avr51/libc.a(malloc.o)
+                0x0000162e                malloc
+                0x0000175e                free
  .text.avr-libc
-                0x00001330       0x1a /usr/local/CrossPack-AVR-20131216/lib/gcc/avr/4.8.1/../../../../avr/lib/avr51/libc.a(memcmp.o)
-                0x00001330                memcmp
+                0x0000187c       0x1a /usr/local/CrossPack-AVR-20131216/lib/gcc/avr/4.8.1/../../../../avr/lib/avr51/libc.a(memcmp.o)
+                0x0000187c                memcmp
  .text.avr-libc
-                0x0000134a       0x12 /usr/local/CrossPack-AVR-20131216/lib/gcc/avr/4.8.1/../../../../avr/lib/avr51/libc.a(memcpy.o)
-                0x0000134a                memcpy
+                0x00001896       0x12 /usr/local/CrossPack-AVR-20131216/lib/gcc/avr/4.8.1/../../../../avr/lib/avr51/libc.a(memcpy.o)
+                0x00001896                memcpy
  .text.avr-libc
-                0x0000135c       0x16 /usr/local/CrossPack-AVR-20131216/lib/gcc/avr/4.8.1/../../../../avr/lib/avr51/libc.a(strchr.o)
-                0x0000135c                strchr
+                0x000018a8       0x16 /usr/local/CrossPack-AVR-20131216/lib/gcc/avr/4.8.1/../../../../avr/lib/avr51/libc.a(strchr.o)
+                0x000018a8                strchr
  .text.avr-libc
-                0x00001372        0xe /usr/local/CrossPack-AVR-20131216/lib/gcc/avr/4.8.1/../../../../avr/lib/avr51/libc.a(strcpy.o)
-                0x00001372                strcpy
+                0x000018be        0xe /usr/local/CrossPack-AVR-20131216/lib/gcc/avr/4.8.1/../../../../avr/lib/avr51/libc.a(strcpy.o)
+                0x000018be                strcpy
  .text.avr-libc
-                0x00001380       0x34 /usr/local/CrossPack-AVR-20131216/lib/gcc/avr/4.8.1/../../../../avr/lib/avr51/libc.a(strstr.o)
-                0x00001380                strstr
+                0x000018cc       0x96 /usr/local/CrossPack-AVR-20131216/lib/gcc/avr/4.8.1/../../../../avr/lib/avr51/libc.a(fdevopen.o)
+                0x000018cc                fdevopen
  .text.avr-libc
-                0x000013b4       0x96 /usr/local/CrossPack-AVR-20131216/lib/gcc/avr/4.8.1/../../../../avr/lib/avr51/libc.a(fdevopen.o)
-                0x000013b4                fdevopen
+                0x00001962       0x48 /usr/local/CrossPack-AVR-20131216/lib/gcc/avr/4.8.1/../../../../avr/lib/avr51/libc.a(printf_p.o)
+                0x00001962                printf_P
  .text.avr-libc
-                0x0000144a       0x48 /usr/local/CrossPack-AVR-20131216/lib/gcc/avr/4.8.1/../../../../avr/lib/avr51/libc.a(printf_p.o)
-                0x0000144a                printf_P
+                0x000019aa       0x5e /usr/local/CrossPack-AVR-20131216/lib/gcc/avr/4.8.1/../../../../avr/lib/avr51/libc.a(sprintf.o)
+                0x000019aa                sprintf
  .text.avr-libc
-                0x00001492       0x5e /usr/local/CrossPack-AVR-20131216/lib/gcc/avr/4.8.1/../../../../avr/lib/avr51/libc.a(sprintf_p.o)
-                0x00001492                sprintf_P
+                0x00001a08       0x5e /usr/local/CrossPack-AVR-20131216/lib/gcc/avr/4.8.1/../../../../avr/lib/avr51/libc.a(sprintf_p.o)
+                0x00001a08                sprintf_P
  .text.avr-libc
-                0x000014f0       0x1e /usr/local/CrossPack-AVR-20131216/lib/gcc/avr/4.8.1/../../../../avr/lib/avr51/libc.a(vfprintf_p.o)
-                0x000014f0                vfprintf_P
+                0x00001a66       0x1e /usr/local/CrossPack-AVR-20131216/lib/gcc/avr/4.8.1/../../../../avr/lib/avr51/libc.a(vfprintf_p.o)
+                0x00001a66                vfprintf_P
  .text.avr-libc
-                0x0000150e      0x3f6 /usr/local/CrossPack-AVR-20131216/lib/gcc/avr/4.8.1/../../../../avr/lib/avr51/libc.a(vfprintf_std.o)
-                0x0000150e                vfprintf
+                0x00001a84      0x3f6 /usr/local/CrossPack-AVR-20131216/lib/gcc/avr/4.8.1/../../../../avr/lib/avr51/libc.a(vfprintf_std.o)
+                0x00001a84                vfprintf
  .text.avr-libc
-                0x00001904       0x10 /usr/local/CrossPack-AVR-20131216/lib/gcc/avr/4.8.1/../../../../avr/lib/avr51/libc.a(eerd_byte_atmega1284p.o)
-                0x00001904                __eerd_byte_m1284p
+                0x00001e7a       0x10 /usr/local/CrossPack-AVR-20131216/lib/gcc/avr/4.8.1/../../../../avr/lib/avr51/libc.a(eerd_byte_atmega1284p.o)
+                0x00001e7a                __eerd_byte_m1284p
  .text.avr-libc
-                0x00001914       0x1c /usr/local/CrossPack-AVR-20131216/lib/gcc/avr/4.8.1/../../../../avr/lib/avr51/libc.a(eewr_byte_atmega1284p.o)
-                0x00001914                __eewr_byte_m1284p
-                0x00001916                __eewr_r18_m1284p
+                0x00001e8a       0x1c /usr/local/CrossPack-AVR-20131216/lib/gcc/avr/4.8.1/../../../../avr/lib/avr51/libc.a(eewr_byte_atmega1284p.o)
+                0x00001e8a                __eewr_byte_m1284p
+                0x00001e8c                __eewr_r18_m1284p
  .text.avr-libc
-                0x00001930       0x38 /usr/local/CrossPack-AVR-20131216/lib/gcc/avr/4.8.1/../../../../avr/lib/avr51/libc.a(calloc.o)
-                0x00001930                calloc
+                0x00001ea6       0x38 /usr/local/CrossPack-AVR-20131216/lib/gcc/avr/4.8.1/../../../../avr/lib/avr51/libc.a(calloc.o)
+                0x00001ea6                calloc
  .text.avr-libc
-                0x00001968       0x16 /usr/local/CrossPack-AVR-20131216/lib/gcc/avr/4.8.1/../../../../avr/lib/avr51/libc.a(strnlen_P.o)
-                0x00001968                strnlen_P
+                0x00001ede       0x16 /usr/local/CrossPack-AVR-20131216/lib/gcc/avr/4.8.1/../../../../avr/lib/avr51/libc.a(strnlen_P.o)
+                0x00001ede                strnlen_P
  .text.avr-libc
-                0x0000197e        0xe /usr/local/CrossPack-AVR-20131216/lib/gcc/avr/4.8.1/../../../../avr/lib/avr51/libc.a(memset.o)
-                0x0000197e                memset
+                0x00001ef4        0xe /usr/local/CrossPack-AVR-20131216/lib/gcc/avr/4.8.1/../../../../avr/lib/avr51/libc.a(memset.o)
+                0x00001ef4                memset
  .text.avr-libc
-                0x0000198c       0x16 /usr/local/CrossPack-AVR-20131216/lib/gcc/avr/4.8.1/../../../../avr/lib/avr51/libc.a(strnlen.o)
-                0x0000198c                strnlen
+                0x00001f02       0x16 /usr/local/CrossPack-AVR-20131216/lib/gcc/avr/4.8.1/../../../../avr/lib/avr51/libc.a(strnlen.o)
+                0x00001f02                strnlen
  .text.avr-libc
-                0x000019a2       0x64 /usr/local/CrossPack-AVR-20131216/lib/gcc/avr/4.8.1/../../../../avr/lib/avr51/libc.a(fputc.o)
-                0x000019a2                fputc
+                0x00001f18       0x64 /usr/local/CrossPack-AVR-20131216/lib/gcc/avr/4.8.1/../../../../avr/lib/avr51/libc.a(fputc.o)
+                0x00001f18                fputc
  .text.avr-libc
-                0x00001a06       0xbc /usr/local/CrossPack-AVR-20131216/lib/gcc/avr/4.8.1/../../../../avr/lib/avr51/libc.a(ultoa_invert.o)
-                0x00001a06                __ultoa_invert
-                0x00001ac2                . = ALIGN (0x2)
+                0x00001f7c       0xbc /usr/local/CrossPack-AVR-20131216/lib/gcc/avr/4.8.1/../../../../avr/lib/avr51/libc.a(ultoa_invert.o)
+                0x00001f7c                __ultoa_invert
+                0x00002038                . = ALIGN (0x2)
  *(.fini9)
- .fini9         0x00001ac2        0x0 /usr/local/CrossPack-AVR-20131216/lib/gcc/avr/4.8.1/avr51/libgcc.a(_exit.o)
-                0x00001ac2                exit
-                0x00001ac2                _exit
+ .fini9         0x00002038        0x0 /usr/local/CrossPack-AVR-20131216/lib/gcc/avr/4.8.1/avr51/libgcc.a(_exit.o)
+                0x00002038                exit
+                0x00002038                _exit
  *(.fini9)
  *(.fini8)
  *(.fini8)
@@ -672,11 +715,11 @@ END GROUP
  *(.fini1)
  *(.fini1)
  *(.fini0)
- .fini0         0x00001ac2        0x4 /usr/local/CrossPack-AVR-20131216/lib/gcc/avr/4.8.1/avr51/libgcc.a(_exit.o)
+ .fini0         0x00002038        0x4 /usr/local/CrossPack-AVR-20131216/lib/gcc/avr/4.8.1/avr51/libgcc.a(_exit.o)
  *(.fini0)
-                0x00001ac6                _etext = .
+                0x0000203c                _etext = .
 
-.data           0x00800100       0x36 load address 0x00001ac6
+.data           0x00800100       0x44 load address 0x0000203c
                 0x00800100                PROVIDE (__data_start, .)
  *(.data)
  .data          0x00800100        0x0 /usr/local/CrossPack-AVR-20131216/lib/gcc/avr/4.8.1/../../../../avr/lib/avr51/crtm1284p.o
@@ -687,6 +730,7 @@ END GROUP
  .data          0x00800100        0x0 ./util/log.o
  .data          0x00800100        0x0 ./usart/usart_btle.o
  .data          0x00800100        0x0 ./usart/usart_wan.o
+ .data          0x00800100        0x0 ./ramdisk/ramdisk.o
  .data          0x00800100        0x0 ./queue/queue.o
  .data          0x00800100        0x0 ./eeprom/eeprom.o
  .data          0x00800100        0x0 ./btle/btle.o
@@ -695,6 +739,7 @@ END GROUP
  .data          0x00800100        0x0 /usr/local/CrossPack-AVR-20131216/lib/gcc/avr/4.8.1/avr51/libgcc.a(_exit.o)
  .data          0x00800100        0x0 /usr/local/CrossPack-AVR-20131216/lib/gcc/avr/4.8.1/avr51/libgcc.a(_copy_data.o)
  .data          0x00800100        0x0 /usr/local/CrossPack-AVR-20131216/lib/gcc/avr/4.8.1/avr51/libgcc.a(_clear_bss.o)
+ .data          0x00800100        0x0 /usr/local/CrossPack-AVR-20131216/lib/gcc/avr/4.8.1/avr51/libgcc.a(_cmpdi2.o)
  .data          0x00800100        0x0 /usr/local/CrossPack-AVR-20131216/lib/gcc/avr/4.8.1/avr51/libgcc.a(_cmpdi2_s8.o)
  .data          0x00800100        0x6 /usr/local/CrossPack-AVR-20131216/lib/gcc/avr/4.8.1/../../../../avr/lib/avr51/libc.a(malloc.o)
                 0x00800100                __malloc_heap_end
@@ -704,10 +749,10 @@ END GROUP
  .data          0x00800106        0x0 /usr/local/CrossPack-AVR-20131216/lib/gcc/avr/4.8.1/../../../../avr/lib/avr51/libc.a(memcpy.o)
  .data          0x00800106        0x0 /usr/local/CrossPack-AVR-20131216/lib/gcc/avr/4.8.1/../../../../avr/lib/avr51/libc.a(strchr.o)
  .data          0x00800106        0x0 /usr/local/CrossPack-AVR-20131216/lib/gcc/avr/4.8.1/../../../../avr/lib/avr51/libc.a(strcpy.o)
- .data          0x00800106        0x0 /usr/local/CrossPack-AVR-20131216/lib/gcc/avr/4.8.1/../../../../avr/lib/avr51/libc.a(strstr.o)
  .data          0x00800106        0x0 /usr/local/CrossPack-AVR-20131216/lib/gcc/avr/4.8.1/../../../../avr/lib/avr51/libc.a(fdevopen.o)
  .data          0x00800106        0x0 /usr/local/CrossPack-AVR-20131216/lib/gcc/avr/4.8.1/../../../../avr/lib/avr51/libc.a(iob.o)
  .data          0x00800106        0x0 /usr/local/CrossPack-AVR-20131216/lib/gcc/avr/4.8.1/../../../../avr/lib/avr51/libc.a(printf_p.o)
+ .data          0x00800106        0x0 /usr/local/CrossPack-AVR-20131216/lib/gcc/avr/4.8.1/../../../../avr/lib/avr51/libc.a(sprintf.o)
  .data          0x00800106        0x0 /usr/local/CrossPack-AVR-20131216/lib/gcc/avr/4.8.1/../../../../avr/lib/avr51/libc.a(sprintf_p.o)
  .data          0x00800106        0x0 /usr/local/CrossPack-AVR-20131216/lib/gcc/avr/4.8.1/../../../../avr/lib/avr51/libc.a(vfprintf_p.o)
  .data          0x00800106        0x0 /usr/local/CrossPack-AVR-20131216/lib/gcc/avr/4.8.1/../../../../avr/lib/avr51/libc.a(vfprintf_std.o)
@@ -729,116 +774,140 @@ END GROUP
  *(.rodata)
  *(.rodata*)
  .rodata.str1.1
-                0x00800128        0xd ./main.o
+                0x00800128        0x8 ./wan/wan_driver.o
+ .rodata.str1.1
+                0x00800130        0x7 ./usart/usart_wan.o
+ .rodata.str1.1
+                0x00800137        0xd ./main.o
  *(.gnu.linkonce.d*)
-                0x00800136                . = ALIGN (0x2)
- *fill*         0x00800135        0x1 
-                0x00800136                _edata = .
-                0x00800136                PROVIDE (__data_end, .)
+                0x00800144                . = ALIGN (0x2)
+                0x00800144                _edata = .
+                0x00800144                PROVIDE (__data_end, .)
 
-.bss            0x00800136      0x656
-                0x00800136                PROVIDE (__bss_start, .)
+.bss            0x00800144      0x858
+                0x00800144                PROVIDE (__bss_start, .)
  *(.bss)
- .bss           0x00800136        0x0 /usr/local/CrossPack-AVR-20131216/lib/gcc/avr/4.8.1/../../../../avr/lib/avr51/crtm1284p.o
- .bss           0x00800136        0x0 ./wan/wan.o
- .bss           0x00800136        0x0 ./wan/wan_driver.o
- .bss           0x00800136        0x0 ./util/clock.o
- .bss           0x00800136        0x0 ./util/config.o
- .bss           0x00800136        0x0 ./util/log.o
- .bss           0x00800136        0x0 ./usart/usart_btle.o
- .bss           0x00800136        0x0 ./usart/usart_wan.o
- .bss           0x00800136        0x0 ./queue/queue.o
- .bss           0x00800136        0x0 ./eeprom/eeprom.o
- .bss           0x00800136        0x0 ./btle/btle.o
- .bss           0x00800136        0x0 ./btle/btle_driver.o
- .bss           0x00800136        0x0 ./main.o
- .bss           0x00800136        0x0 /usr/local/CrossPack-AVR-20131216/lib/gcc/avr/4.8.1/avr51/libgcc.a(_exit.o)
- .bss           0x00800136        0x0 /usr/local/CrossPack-AVR-20131216/lib/gcc/avr/4.8.1/avr51/libgcc.a(_copy_data.o)
- .bss           0x00800136        0x0 /usr/local/CrossPack-AVR-20131216/lib/gcc/avr/4.8.1/avr51/libgcc.a(_clear_bss.o)
- .bss           0x00800136        0x0 /usr/local/CrossPack-AVR-20131216/lib/gcc/avr/4.8.1/avr51/libgcc.a(_cmpdi2_s8.o)
- .bss           0x00800136        0x0 /usr/local/CrossPack-AVR-20131216/lib/gcc/avr/4.8.1/../../../../avr/lib/avr51/libc.a(malloc.o)
- .bss           0x00800136        0x0 /usr/local/CrossPack-AVR-20131216/lib/gcc/avr/4.8.1/../../../../avr/lib/avr51/libc.a(memcmp.o)
- .bss           0x00800136        0x0 /usr/local/CrossPack-AVR-20131216/lib/gcc/avr/4.8.1/../../../../avr/lib/avr51/libc.a(memcpy.o)
- .bss           0x00800136        0x0 /usr/local/CrossPack-AVR-20131216/lib/gcc/avr/4.8.1/../../../../avr/lib/avr51/libc.a(strchr.o)
- .bss           0x00800136        0x0 /usr/local/CrossPack-AVR-20131216/lib/gcc/avr/4.8.1/../../../../avr/lib/avr51/libc.a(strcpy.o)
- .bss           0x00800136        0x0 /usr/local/CrossPack-AVR-20131216/lib/gcc/avr/4.8.1/../../../../avr/lib/avr51/libc.a(strstr.o)
- .bss           0x00800136        0x0 /usr/local/CrossPack-AVR-20131216/lib/gcc/avr/4.8.1/../../../../avr/lib/avr51/libc.a(fdevopen.o)
- .bss           0x00800136        0x0 /usr/local/CrossPack-AVR-20131216/lib/gcc/avr/4.8.1/../../../../avr/lib/avr51/libc.a(iob.o)
- .bss           0x00800136        0x0 /usr/local/CrossPack-AVR-20131216/lib/gcc/avr/4.8.1/../../../../avr/lib/avr51/libc.a(printf_p.o)
- .bss           0x00800136        0x0 /usr/local/CrossPack-AVR-20131216/lib/gcc/avr/4.8.1/../../../../avr/lib/avr51/libc.a(sprintf_p.o)
- .bss           0x00800136        0x0 /usr/local/CrossPack-AVR-20131216/lib/gcc/avr/4.8.1/../../../../avr/lib/avr51/libc.a(vfprintf_p.o)
- .bss           0x00800136        0x0 /usr/local/CrossPack-AVR-20131216/lib/gcc/avr/4.8.1/../../../../avr/lib/avr51/libc.a(vfprintf_std.o)
- .bss           0x00800136        0x0 /usr/local/CrossPack-AVR-20131216/lib/gcc/avr/4.8.1/../../../../avr/lib/avr51/libc.a(eerd_byte_atmega1284p.o)
- .bss           0x00800136        0x0 /usr/local/CrossPack-AVR-20131216/lib/gcc/avr/4.8.1/../../../../avr/lib/avr51/libc.a(eewr_byte_atmega1284p.o)
- .bss           0x00800136        0x0 /usr/local/CrossPack-AVR-20131216/lib/gcc/avr/4.8.1/../../../../avr/lib/avr51/libc.a(calloc.o)
- .bss           0x00800136        0x0 /usr/local/CrossPack-AVR-20131216/lib/gcc/avr/4.8.1/../../../../avr/lib/avr51/libc.a(strnlen_P.o)
- .bss           0x00800136        0x0 /usr/local/CrossPack-AVR-20131216/lib/gcc/avr/4.8.1/../../../../avr/lib/avr51/libc.a(memset.o)
- .bss           0x00800136        0x0 /usr/local/CrossPack-AVR-20131216/lib/gcc/avr/4.8.1/../../../../avr/lib/avr51/libc.a(strnlen.o)
- .bss           0x00800136        0x0 /usr/local/CrossPack-AVR-20131216/lib/gcc/avr/4.8.1/../../../../avr/lib/avr51/libc.a(fputc.o)
- .bss           0x00800136        0x0 /usr/local/CrossPack-AVR-20131216/lib/gcc/avr/4.8.1/../../../../avr/lib/avr51/libc.a(ultoa_invert.o)
+ .bss           0x00800144        0x0 /usr/local/CrossPack-AVR-20131216/lib/gcc/avr/4.8.1/../../../../avr/lib/avr51/crtm1284p.o
+ .bss           0x00800144        0x0 ./wan/wan.o
+ .bss           0x00800144        0x0 ./wan/wan_driver.o
+ .bss           0x00800144        0x0 ./util/clock.o
+ .bss           0x00800144        0x0 ./util/config.o
+ .bss           0x00800144        0x0 ./util/log.o
+ .bss           0x00800144        0x0 ./usart/usart_btle.o
+ .bss           0x00800144        0x0 ./usart/usart_wan.o
+ .bss           0x00800144        0x0 ./ramdisk/ramdisk.o
+ .bss           0x00800144        0x0 ./queue/queue.o
+ .bss           0x00800144        0x0 ./eeprom/eeprom.o
+ .bss           0x00800144        0x0 ./btle/btle.o
+ .bss           0x00800144        0x0 ./btle/btle_driver.o
+ .bss           0x00800144        0x0 ./main.o
+ .bss           0x00800144        0x0 /usr/local/CrossPack-AVR-20131216/lib/gcc/avr/4.8.1/avr51/libgcc.a(_exit.o)
+ .bss           0x00800144        0x0 /usr/local/CrossPack-AVR-20131216/lib/gcc/avr/4.8.1/avr51/libgcc.a(_copy_data.o)
+ .bss           0x00800144        0x0 /usr/local/CrossPack-AVR-20131216/lib/gcc/avr/4.8.1/avr51/libgcc.a(_clear_bss.o)
+ .bss           0x00800144        0x0 /usr/local/CrossPack-AVR-20131216/lib/gcc/avr/4.8.1/avr51/libgcc.a(_cmpdi2.o)
+ .bss           0x00800144        0x0 /usr/local/CrossPack-AVR-20131216/lib/gcc/avr/4.8.1/avr51/libgcc.a(_cmpdi2_s8.o)
+ .bss           0x00800144        0x0 /usr/local/CrossPack-AVR-20131216/lib/gcc/avr/4.8.1/../../../../avr/lib/avr51/libc.a(malloc.o)
+ .bss           0x00800144        0x0 /usr/local/CrossPack-AVR-20131216/lib/gcc/avr/4.8.1/../../../../avr/lib/avr51/libc.a(memcmp.o)
+ .bss           0x00800144        0x0 /usr/local/CrossPack-AVR-20131216/lib/gcc/avr/4.8.1/../../../../avr/lib/avr51/libc.a(memcpy.o)
+ .bss           0x00800144        0x0 /usr/local/CrossPack-AVR-20131216/lib/gcc/avr/4.8.1/../../../../avr/lib/avr51/libc.a(strchr.o)
+ .bss           0x00800144        0x0 /usr/local/CrossPack-AVR-20131216/lib/gcc/avr/4.8.1/../../../../avr/lib/avr51/libc.a(strcpy.o)
+ .bss           0x00800144        0x0 /usr/local/CrossPack-AVR-20131216/lib/gcc/avr/4.8.1/../../../../avr/lib/avr51/libc.a(fdevopen.o)
+ .bss           0x00800144        0x0 /usr/local/CrossPack-AVR-20131216/lib/gcc/avr/4.8.1/../../../../avr/lib/avr51/libc.a(iob.o)
+ .bss           0x00800144        0x0 /usr/local/CrossPack-AVR-20131216/lib/gcc/avr/4.8.1/../../../../avr/lib/avr51/libc.a(printf_p.o)
+ .bss           0x00800144        0x0 /usr/local/CrossPack-AVR-20131216/lib/gcc/avr/4.8.1/../../../../avr/lib/avr51/libc.a(sprintf.o)
+ .bss           0x00800144        0x0 /usr/local/CrossPack-AVR-20131216/lib/gcc/avr/4.8.1/../../../../avr/lib/avr51/libc.a(sprintf_p.o)
+ .bss           0x00800144        0x0 /usr/local/CrossPack-AVR-20131216/lib/gcc/avr/4.8.1/../../../../avr/lib/avr51/libc.a(vfprintf_p.o)
+ .bss           0x00800144        0x0 /usr/local/CrossPack-AVR-20131216/lib/gcc/avr/4.8.1/../../../../avr/lib/avr51/libc.a(vfprintf_std.o)
+ .bss           0x00800144        0x0 /usr/local/CrossPack-AVR-20131216/lib/gcc/avr/4.8.1/../../../../avr/lib/avr51/libc.a(eerd_byte_atmega1284p.o)
+ .bss           0x00800144        0x0 /usr/local/CrossPack-AVR-20131216/lib/gcc/avr/4.8.1/../../../../avr/lib/avr51/libc.a(eewr_byte_atmega1284p.o)
+ .bss           0x00800144        0x0 /usr/local/CrossPack-AVR-20131216/lib/gcc/avr/4.8.1/../../../../avr/lib/avr51/libc.a(calloc.o)
+ .bss           0x00800144        0x0 /usr/local/CrossPack-AVR-20131216/lib/gcc/avr/4.8.1/../../../../avr/lib/avr51/libc.a(strnlen_P.o)
+ .bss           0x00800144        0x0 /usr/local/CrossPack-AVR-20131216/lib/gcc/avr/4.8.1/../../../../avr/lib/avr51/libc.a(memset.o)
+ .bss           0x00800144        0x0 /usr/local/CrossPack-AVR-20131216/lib/gcc/avr/4.8.1/../../../../avr/lib/avr51/libc.a(strnlen.o)
+ .bss           0x00800144        0x0 /usr/local/CrossPack-AVR-20131216/lib/gcc/avr/4.8.1/../../../../avr/lib/avr51/libc.a(fputc.o)
+ .bss           0x00800144        0x0 /usr/local/CrossPack-AVR-20131216/lib/gcc/avr/4.8.1/../../../../avr/lib/avr51/libc.a(ultoa_invert.o)
  *(.bss*)
+ .bss.cmd       0x00800144        0x2 ./wan/wan_driver.o
+                0x00800144                cmd
+ .bss.message_length
+                0x00800146        0x2 ./wan/wan_driver.o
+                0x00800146                message_length
+ .bss.message_index
+                0x00800148        0x1 ./wan/wan_driver.o
+                0x00800148                message_index
+ .bss.array_index
+                0x00800149        0x1 ./wan/wan_driver.o
+                0x00800149                array_index
  .bss.wan_line_index
-                0x00800136        0x2 ./wan/wan_driver.o
-                0x00800136                wan_line_index
+                0x0080014a        0x2 ./wan/wan_driver.o
+                0x0080014a                wan_line_index
  .bss.wan_new_line
-                0x00800138        0x1 ./wan/wan_driver.o
-                0x00800138                wan_new_line
+                0x0080014c        0x1 ./wan/wan_driver.o
+                0x0080014c                wan_new_line
  .bss.wan_index
-                0x00800139        0x2 ./wan/wan_driver.o
-                0x00800139                wan_index
+                0x0080014d        0x2 ./wan/wan_driver.o
+                0x0080014d                wan_index
  .bss.btle_buffer
-                0x0080013b      0x204 ./usart/usart_btle.o
-                0x0080013b                btle_buffer
+                0x0080014f      0x204 ./usart/usart_btle.o
+                0x0080014f                btle_buffer
  .bss.wan_buffer
-                0x0080033f      0x204 ./usart/usart_wan.o
-                0x0080033f                wan_buffer
+                0x00800353      0x204 ./usart/usart_wan.o
+                0x00800353                wan_buffer
+ .bss.deleted_head
+                0x00800557        0x2 ./ramdisk/ramdisk.o
+ .bss.valid_head
+                0x00800559        0x2 ./ramdisk/ramdisk.o
+ .bss.records   0x0080055b      0x177 ./ramdisk/ramdisk.o
  .bss.btle_line_index
-                0x00800543        0x2 ./btle/btle_driver.o
-                0x00800543                btle_line_index
- .bss.new_line  0x00800545        0x1 ./btle/btle_driver.o
-                0x00800545                new_line
+                0x008006d2        0x2 ./btle/btle_driver.o
+                0x008006d2                btle_line_index
+ .bss.new_line  0x008006d4        0x1 ./btle/btle_driver.o
+                0x008006d4                new_line
  .bss.btle_index
-                0x00800546        0x2 ./btle/btle_driver.o
-                0x00800546                btle_index
- .bss.future    0x00800548        0x4 ./main.o
-                0x00800548                future
- .bss.term_in   0x0080054c        0x1 ./main.o
-                0x0080054c                term_in
+                0x008006d5        0x2 ./btle/btle_driver.o
+                0x008006d5                btle_index
+ .bss.future    0x008006d7        0x4 ./main.o
+                0x008006d7                future
+ .bss.term_in   0x008006db        0x1 ./main.o
+                0x008006db                term_in
  *(COMMON)
- COMMON         0x0080054d        0xc ./wan/wan.o
-                0x0080054d                wan_queue
- COMMON         0x00800559      0x102 ./wan/wan_driver.o
-                0x00800559                wan_line_buffer
-                0x008005da                wan_lines
- COMMON         0x0080065b        0x4 ./util/clock.o
-                0x0080065b                clock_millis
- COMMON         0x0080065f        0xf ./util/config.o
-                0x0080065f                config
- COMMON         0x0080066e        0x4 ./util/log.o
-                0x0080066e                debug_out_cb
-                0x00800670                debug_rx_cb
- COMMON         0x00800672        0x2 ./usart/usart_btle.o
-                0x00800672                btle_rx_cb
- COMMON         0x00800674        0xc ./btle/btle.o
-                0x00800674                btle_queue
- COMMON         0x00800680      0x102 ./btle/btle_driver.o
-                0x00800680                btle_lines
-                0x00800701                btle_line_buffer
- COMMON         0x00800782        0x4 /usr/local/CrossPack-AVR-20131216/lib/gcc/avr/4.8.1/../../../../avr/lib/avr51/libc.a(malloc.o)
-                0x00800782                __brkval
-                0x00800784                __flp
- COMMON         0x00800786        0x6 /usr/local/CrossPack-AVR-20131216/lib/gcc/avr/4.8.1/../../../../avr/lib/avr51/libc.a(iob.o)
-                0x00800786                __iob
-                0x0080078c                PROVIDE (__bss_end, .)
-                0x00001ac6                __data_load_start = LOADADDR (.data)
-                0x00001afc                __data_load_end = (__data_load_start + SIZEOF (.data))
+ COMMON         0x008006dc        0xc ./wan/wan.o
+                0x008006dc                wan_queue
+ COMMON         0x008006e8      0x183 ./wan/wan_driver.o
+                0x008006e8                wan_line_buffer
+                0x00800769                appConfig
+                0x0080076a                bytes_message
+                0x008007aa                wan_lines
+                0x0080082b                bytes_received
+ COMMON         0x0080086b        0x4 ./util/clock.o
+                0x0080086b                clock_millis
+ COMMON         0x0080086f        0xf ./util/config.o
+                0x0080086f                config
+ COMMON         0x0080087e        0x4 ./util/log.o
+                0x0080087e                debug_out_cb
+                0x00800880                debug_rx_cb
+ COMMON         0x00800882        0x2 ./usart/usart_btle.o
+                0x00800882                btle_rx_cb
+ COMMON         0x00800884        0xc ./btle/btle.o
+                0x00800884                btle_queue
+ COMMON         0x00800890      0x102 ./btle/btle_driver.o
+                0x00800890                btle_lines
+                0x00800911                btle_line_buffer
+ COMMON         0x00800992        0x4 /usr/local/CrossPack-AVR-20131216/lib/gcc/avr/4.8.1/../../../../avr/lib/avr51/libc.a(malloc.o)
+                0x00800992                __brkval
+                0x00800994                __flp
+ COMMON         0x00800996        0x6 /usr/local/CrossPack-AVR-20131216/lib/gcc/avr/4.8.1/../../../../avr/lib/avr51/libc.a(iob.o)
+                0x00800996                __iob
+                0x0080099c                PROVIDE (__bss_end, .)
+                0x0000203c                __data_load_start = LOADADDR (.data)
+                0x00002080                __data_load_end = (__data_load_start + SIZEOF (.data))
 
-.noinit         0x0080078c        0x0
-                0x0080078c                PROVIDE (__noinit_start, .)
+.noinit         0x0080099c        0x0
+                0x0080099c                PROVIDE (__noinit_start, .)
  *(.noinit*)
-                0x0080078c                PROVIDE (__noinit_end, .)
-                0x0080078c                _end = .
-                0x0080078c                PROVIDE (__heap_start, .)
+                0x0080099c                PROVIDE (__noinit_end, .)
+                0x0080099c                _end = .
+                0x0080099c                PROVIDE (__heap_start, .)
 
 .eeprom         0x00810000        0x0
  *(.eeprom*)
@@ -887,6 +956,7 @@ END GROUP
  .comment       0x00000000       0x12 ./util/log.o
  .comment       0x00000000       0x12 ./usart/usart_btle.o
  .comment       0x00000000       0x12 ./usart/usart_wan.o
+ .comment       0x00000000       0x12 ./ramdisk/ramdisk.o
  .comment       0x00000000       0x12 ./queue/queue.o
  .comment       0x00000000       0x12 ./eeprom/eeprom.o
  .comment       0x00000000       0x12 ./btle/btle.o
@@ -896,6 +966,7 @@ END GROUP
  .comment       0x00000000       0x12 /usr/local/CrossPack-AVR-20131216/lib/gcc/avr/4.8.1/../../../../avr/lib/avr51/libc.a(fdevopen.o)
  .comment       0x00000000       0x12 /usr/local/CrossPack-AVR-20131216/lib/gcc/avr/4.8.1/../../../../avr/lib/avr51/libc.a(iob.o)
  .comment       0x00000000       0x12 /usr/local/CrossPack-AVR-20131216/lib/gcc/avr/4.8.1/../../../../avr/lib/avr51/libc.a(printf_p.o)
+ .comment       0x00000000       0x12 /usr/local/CrossPack-AVR-20131216/lib/gcc/avr/4.8.1/../../../../avr/lib/avr51/libc.a(sprintf.o)
  .comment       0x00000000       0x12 /usr/local/CrossPack-AVR-20131216/lib/gcc/avr/4.8.1/../../../../avr/lib/avr51/libc.a(sprintf_p.o)
  .comment       0x00000000       0x12 /usr/local/CrossPack-AVR-20131216/lib/gcc/avr/4.8.1/../../../../avr/lib/avr51/libc.a(vfprintf_p.o)
  .comment       0x00000000       0x12 /usr/local/CrossPack-AVR-20131216/lib/gcc/avr/4.8.1/../../../../avr/lib/avr51/libc.a(vfprintf_std.o)
@@ -914,7 +985,7 @@ END GROUP
 .debug_sfnames
  *(.debug_sfnames)
 
-.debug_aranges  0x00000000       0x80
+.debug_aranges  0x00000000       0xa0
  *(.debug_aranges)
  .debug_aranges
                 0x00000000       0x20 /usr/local/CrossPack-AVR-20131216/lib/gcc/avr/4.8.1/avr51/libgcc.a(_exit.o)
@@ -923,32 +994,37 @@ END GROUP
  .debug_aranges
                 0x00000040       0x20 /usr/local/CrossPack-AVR-20131216/lib/gcc/avr/4.8.1/avr51/libgcc.a(_clear_bss.o)
  .debug_aranges
-                0x00000060       0x20 /usr/local/CrossPack-AVR-20131216/lib/gcc/avr/4.8.1/avr51/libgcc.a(_cmpdi2_s8.o)
+                0x00000060       0x20 /usr/local/CrossPack-AVR-20131216/lib/gcc/avr/4.8.1/avr51/libgcc.a(_cmpdi2.o)
+ .debug_aranges
+                0x00000080       0x20 /usr/local/CrossPack-AVR-20131216/lib/gcc/avr/4.8.1/avr51/libgcc.a(_cmpdi2_s8.o)
 
 .debug_pubnames
  *(.debug_pubnames)
 
-.debug_info     0x00000000      0x2fc
+.debug_info     0x00000000      0x3bb
  *(.debug_info)
  .debug_info    0x00000000       0xbf /usr/local/CrossPack-AVR-20131216/lib/gcc/avr/4.8.1/avr51/libgcc.a(_exit.o)
  .debug_info    0x000000bf       0xbf /usr/local/CrossPack-AVR-20131216/lib/gcc/avr/4.8.1/avr51/libgcc.a(_copy_data.o)
  .debug_info    0x0000017e       0xbf /usr/local/CrossPack-AVR-20131216/lib/gcc/avr/4.8.1/avr51/libgcc.a(_clear_bss.o)
- .debug_info    0x0000023d       0xbf /usr/local/CrossPack-AVR-20131216/lib/gcc/avr/4.8.1/avr51/libgcc.a(_cmpdi2_s8.o)
+ .debug_info    0x0000023d       0xbf /usr/local/CrossPack-AVR-20131216/lib/gcc/avr/4.8.1/avr51/libgcc.a(_cmpdi2.o)
+ .debug_info    0x000002fc       0xbf /usr/local/CrossPack-AVR-20131216/lib/gcc/avr/4.8.1/avr51/libgcc.a(_cmpdi2_s8.o)
  *(.gnu.linkonce.wi.*)
 
-.debug_abbrev   0x00000000       0x50
+.debug_abbrev   0x00000000       0x64
  *(.debug_abbrev)
  .debug_abbrev  0x00000000       0x14 /usr/local/CrossPack-AVR-20131216/lib/gcc/avr/4.8.1/avr51/libgcc.a(_exit.o)
  .debug_abbrev  0x00000014       0x14 /usr/local/CrossPack-AVR-20131216/lib/gcc/avr/4.8.1/avr51/libgcc.a(_copy_data.o)
  .debug_abbrev  0x00000028       0x14 /usr/local/CrossPack-AVR-20131216/lib/gcc/avr/4.8.1/avr51/libgcc.a(_clear_bss.o)
- .debug_abbrev  0x0000003c       0x14 /usr/local/CrossPack-AVR-20131216/lib/gcc/avr/4.8.1/avr51/libgcc.a(_cmpdi2_s8.o)
+ .debug_abbrev  0x0000003c       0x14 /usr/local/CrossPack-AVR-20131216/lib/gcc/avr/4.8.1/avr51/libgcc.a(_cmpdi2.o)
+ .debug_abbrev  0x00000050       0x14 /usr/local/CrossPack-AVR-20131216/lib/gcc/avr/4.8.1/avr51/libgcc.a(_cmpdi2_s8.o)
 
-.debug_line     0x00000000      0x175
+.debug_line     0x00000000      0x1ce
  *(.debug_line)
  .debug_line    0x00000000       0x58 /usr/local/CrossPack-AVR-20131216/lib/gcc/avr/4.8.1/avr51/libgcc.a(_exit.o)
  .debug_line    0x00000058       0x63 /usr/local/CrossPack-AVR-20131216/lib/gcc/avr/4.8.1/avr51/libgcc.a(_copy_data.o)
  .debug_line    0x000000bb       0x5e /usr/local/CrossPack-AVR-20131216/lib/gcc/avr/4.8.1/avr51/libgcc.a(_clear_bss.o)
- .debug_line    0x00000119       0x5c /usr/local/CrossPack-AVR-20131216/lib/gcc/avr/4.8.1/avr51/libgcc.a(_cmpdi2_s8.o)
+ .debug_line    0x00000119       0x59 /usr/local/CrossPack-AVR-20131216/lib/gcc/avr/4.8.1/avr51/libgcc.a(_cmpdi2.o)
+ .debug_line    0x00000172       0x5c /usr/local/CrossPack-AVR-20131216/lib/gcc/avr/4.8.1/avr51/libgcc.a(_cmpdi2_s8.o)
 
 .debug_frame
  *(.debug_frame)

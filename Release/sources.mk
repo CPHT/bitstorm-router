@@ -23,6 +23,7 @@ SUBDIRS := \
 wan \
 util \
 usart \
+ramdisk \
 queue \
 . \
 eeprom \

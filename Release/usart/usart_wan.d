@@ -1,3 +1,10 @@
-usart/usart_wan.d: ../usart/usart_wan.c ../usart/usart_wan.h
+usart/usart_wan.d: ../usart/usart_wan.c ../usart/usart_wan.h \
+ ../usart/../config.h ../usart/../wan/wan_msg.h ../usart/usart_btle.h
 
 ../usart/usart_wan.h:
+
+../usart/../config.h:
+
+../usart/../wan/wan_msg.h:
+
+../usart/usart_btle.h:

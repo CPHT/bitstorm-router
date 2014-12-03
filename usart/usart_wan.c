@@ -14,8 +14,11 @@
 #include <util/setbaud.h>
 #include <avr/interrupt.h>
 #include "usart_wan.h"
+#include "../config.h"
+#include "../wan/wan_msg.h"
+#include "usart_btle.h"
 
-WAN_BUFFER wan_buffer = {{0},0,0};
+WAN_BUFFER wan_buffer = { { 0 }, 0, 0 };
 
 void wan_usart_init()
 {
@@ -23,7 +26,7 @@ void wan_usart_init()
 	UBRR0L = UBRRL_VALUE;
 
 	// Enble receiver and transmitter
-	UCSR0B |= (1<<RXCIE0) | (1<<TXEN0);
+	UCSR0B |= (1 << RXCIE0) | (1 << TXEN0);
 
 	// Set rx and tx enable bits
 	UCSR0B |= (1 << RXEN0) | (1 << TXEN0);
@@ -33,16 +36,17 @@ void wan_usart_init()
 
 void wan_usart_put_char(unsigned char c)
 {
-	int i = (unsigned int)(wan_buffer.head + 1) % WAN_RX_BUFFER_SIZE;
+	int i = (unsigned int) (wan_buffer.head + 1) % WAN_RX_BUFFER_SIZE;
 
-		// if we should be storing the received character into the location
-		// just before the tail (meaning that the head would advance to the
-		// current location of the tail), we're about to overflow the buffer
-		// and so we don't write the character or advance the head.
-		if (i != wan_buffer.tail) {
-			wan_buffer.buffer[wan_buffer.head] = c;
-			wan_buffer.head = i;
-		}
+	// if we should be storing the received character into the location
+	// just before the tail (meaning that the head would advance to the
+	// current location of the tail), we're about to overflow the buffer
+	// and so we don't write the character or advance the head.
+	if (i != wan_buffer.tail)
+	{
+		wan_buffer.buffer[wan_buffer.head] = c;
+		wan_buffer.head = i;
+	}
 }
 
 void wan_usart_clear_buffer()
@@ -52,53 +56,82 @@ void wan_usart_clear_buffer()
 
 uint8_t wan_usart_data_available(void)
 {
-	return (uint8_t)(WAN_RX_BUFFER_SIZE + wan_buffer.head - wan_buffer.tail) % WAN_RX_BUFFER_SIZE;
+	return (uint8_t) (WAN_RX_BUFFER_SIZE + wan_buffer.head - wan_buffer.tail)
+			% WAN_RX_BUFFER_SIZE;
 }
 
 uint8_t wan_usart_data_read(void)
 {
 	// if the head isn't ahead of the tail, we don't have any characters
-	if (wan_buffer.head == wan_buffer.tail) {
+	if (wan_buffer.head == wan_buffer.tail)
+	{
 		return -1;
-	} else {
+	} else
+	{
 		uint8_t c = wan_buffer.buffer[wan_buffer.tail];
-		wan_buffer.tail = (unsigned int)(wan_buffer.tail + 1) % WAN_RX_BUFFER_SIZE;
+		wan_buffer.tail = (unsigned int) (wan_buffer.tail + 1)
+				% WAN_RX_BUFFER_SIZE;
 		return c;
 	}
 }
 
-
-void wan_usart_transmit(uint8_t data )
+void wan_usart_transmit(uint8_t data)
 {
-	while (!( UCSR0A & (1<<UDRE0)));
-		UDR0 = data;
+	while (!(UCSR0A & (1 << UDRE0)))
+		;
+	UDR0 = data;
 }
 
 void wan_usart_transmit_bytes(char data[], int size)
 {
-	for (int i=0;i<size;i++)
-		{
-			while (!( UCSR0A & (1<<UDRE0)));
-			UDR0 = data[i];
-		}
+	for (int i = 0; i < size; i++)
+	{
+		while (!(UCSR0A & (1 << UDRE0)))
+			;
+		UDR0 = data[i];
+	}
 }
 
 void wan_usart_transmit_string(char * data)
 {
 	unsigned char c = *data;
 
-		while (c) {
-			while (!( UCSR0A & (1<<UDRE0)));
-			UDR0 = c;
-			c = *(++data);
-		}
+	while (c)
+	{
+		while (!(UCSR0A & (1 << UDRE0)))
+			;
+		UDR0 = c;
+		c = *(++data);
+	}
+}
+
+void wan_usart_get_device_address()
+{
+	cmd_header_t cmd_header;
+	uint8_t frame[10];
+	frame[0] = sizeof(cmd_header) + 1;
+	cmd_header.command = CMD_GET_ADDRESS;
+	int frame_index = 1;
+	// header
+	for (int i = 0; i < sizeof(cmd_header); i++)
+	{
+		frame[frame_index++] = ((uint8_t *) (&cmd_header))[i];
+		//wan_usart_transmit_string("hello\r\n");
+	}
+	// checksum
+	frame[frame_index++] = 0xFF;
+	//char temp[10] = {0x02, 0x04, 0xFF};
+	//wan_usart_transmit_bytes(temp, 3);
+	btle_usart_transmit_string("sent\r\n");
+	wan_usart_transmit_bytes((char*) frame, frame_index);
 }
 
 ISR(WAN_ISR_VECTOR)
 {
-	char data = UDR0;
+	char * data = UDR0;
 	//if (btle_rx_cb != 0) btle_rx_cb(data);
 	wan_usart_put_char(data);
-	//PORTD ^= _BV(PD7);
-	//if (btle_rx_cb != 0) btle_rx_cb(data);
+
+//		//PORTD ^= _BV(PD7);
+
 }
